@@ -157,14 +157,28 @@ function login() {
     return;
   }
 
+  // ✅ Email format validation (NEW FIX)
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    alert("Enter valid email");
+    return;
+  }
+
   // ✅ FINAL CORRECT FLOW
   if (role === "admin") {
     window.location.href = "admin.html";
   } else {
-    // 🔥 FIXED: user goes to admin → auto redirect to dashboard
+    // user → admin → auto redirect → dashboard
     window.location.href = "admin.html?email=" + encodeURIComponent(email);
   }
 }
+
+// ✅ Enter key support (NEW UX IMPROVEMENT)
+document.addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    login();
+  }
+});
 </script>
 
 </body>
