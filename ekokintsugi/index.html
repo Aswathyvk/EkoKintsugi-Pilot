@@ -157,29 +157,35 @@ function login() {
     return;
   }
 
-  // ✅ Email format validation (NEW FIX)
+  // Email validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     alert("Enter valid email");
     return;
   }
 
-  // ✅ FINAL CORRECT FLOW
+  // 🔐 ADMIN ACCESS CONTROL
   if (role === "admin") {
+
+    if (email !== "admin@gmail.com") {
+      alert("Access denied! Only admin@gmail.com can login as admin.");
+      return;
+    }
+
+    // ✅ allowed admin
     window.location.href = "admin.html";
-  } else {
-    // user → admin → auto redirect → dashboard
+  }
+
+  // 👤 USER FLOW
+  else {
     window.location.href = "admin.html?email=" + encodeURIComponent(email);
   }
 }
 
-// ✅ Enter key support (NEW UX IMPROVEMENT)
+// Enter key support
 document.addEventListener("keypress", function(e) {
   if (e.key === "Enter") {
     login();
   }
 });
 </script>
-
-</body>
-</html>
