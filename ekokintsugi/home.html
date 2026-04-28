@@ -100,21 +100,17 @@ async function loadUsers() {
 
   output.innerHTML = html;
 
-  // 🔥 QR CODE GENERATION (FINAL FIXED)
-snapshot.forEach(doc => {
-  const canvas = document.getElementById(`qr-${doc.id}`);
+  // 🔥 QR FIXED HERE
+  snapshot.forEach(doc => {
+    const canvas = document.getElementById(`qr-${doc.id}`);
 
-  // ✅ USE YOUR LIVE DEPLOYED URL
-  const url = "https://ekokintsugi-pilot.onrender.com/dashboard.html?id=" + doc.id;
+    const url = "http://YOUR-IP:5500/dashboard.html?id=" + doc.id;
 
-  QRCode.toCanvas(canvas, url, function (error) {
-    if (error) {
-      console.error("QR Error:", error);
-    } else {
-      console.log("QR generated:", url);
-    }
+    QRCode.toCanvas(canvas, url, function (error) {
+      if (error) console.error(error);
+    });
   });
-});
+}
 
 
 // 🔹 ADD USER
