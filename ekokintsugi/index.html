@@ -10,238 +10,101 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-      background: linear-gradient(145deg, #f4f8fc 0%, #eef2f8 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      position: relative;
+      font-family:'Inter',system-ui;
+      background:linear-gradient(145deg,#f4f8fc,#eef2f8);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
     }
 
-    /* subtle background pattern */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: radial-gradient(circle at 25% 40%, rgba(44, 140, 107, 0.03) 2%, transparent 2.5%);
-      background-size: 48px 48px;
-      pointer-events: none;
-    }
+    .login-container { max-width:460px; width:100%; }
 
-    .login-container {
-      max-width: 460px;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    /* brand header */
-    .brand {
-      text-align: center;
-      margin-bottom: 32px;
-    }
+    .brand { text-align:center; margin-bottom:32px; }
 
     .brand-icon {
-      background: linear-gradient(135deg, #1b5e48, #2c8c6b);
-      width: 64px;
-      height: 64px;
-      border-radius: 24px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-      box-shadow: 0 12px 24px -12px rgba(27, 94, 72, 0.35);
+      background:linear-gradient(135deg,#1b5e48,#2c8c6b);
+      width:64px;height:64px;border-radius:24px;
+      display:flex;align-items:center;justify-content:center;
+      margin:auto;margin-bottom:20px;
     }
 
-    .brand-icon i {
-      font-size: 32px;
-      color: white;
-    }
+    .brand-icon i { color:white;font-size:28px; }
 
     .brand h1 {
-      font-size: 1.9rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #115e4e, #2c8c6b);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 8px;
+      font-size:1.8rem;
+      background:linear-gradient(135deg,#115e4e,#2c8c6b);
+      -webkit-background-clip:text;
+      color:transparent;
     }
 
-    .brand p {
-      color: #5b6e8c;
-      font-size: 0.85rem;
-    }
+    .brand p { color:#6b7c9c;font-size:0.85rem; }
 
-    /* main card */
     .login-card {
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(0px);
-      border-radius: 48px;
-      padding: 44px 36px 48px;
-      box-shadow: 0 25px 45px -18px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      transition: transform 0.2s;
+      background:white;
+      border-radius:30px;
+      padding:35px;
+      box-shadow:0 20px 40px rgba(0,0,0,0.1);
     }
 
-    .login-card:hover {
-      transform: translateY(-2px);
-    }
+    .welcome-text h2 { font-size:1.5rem; margin-bottom:8px; }
+    .welcome-text p { color:#6b7c9c;font-size:0.85rem; }
 
-    .welcome-text {
-      margin-bottom: 32px;
-    }
-
-    .welcome-text h2 {
-      font-size: 1.6rem;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-      color: #0f2d3d;
-    }
-
-    .welcome-text p {
-      font-size: 0.85rem;
-      color: #667c9e;
-      margin-top: 8px;
-    }
-
-    /* form styling */
-    .input-group {
-      margin-bottom: 24px;
-    }
+    .input-group { margin-top:20px; }
 
     .input-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-      color: #5b708b;
-      margin-bottom: 8px;
-    }
-
-    .input-label i {
-      font-size: 0.7rem;
-      color: #2c8c6b;
+      font-size:0.75rem;
+      font-weight:600;
+      color:#5b708b;
+      margin-bottom:6px;
     }
 
     .input-field {
-      width: 100%;
-      padding: 14px 18px;
-      border-radius: 28px;
-      border: 1.5px solid #e2edf2;
-      background: #ffffff;
-      font-family: 'Inter', monospace;
-      font-size: 0.95rem;
-      transition: all 0.2s;
+      width:100%;
+      padding:12px;
+      border-radius:25px;
+      border:1px solid #ddd;
+      font-size:0.9rem;
     }
 
     .input-field:focus {
-      outline: none;
-      border-color: #2f8b64;
-      box-shadow: 0 0 0 4px rgba(47, 139, 100, 0.08);
+      outline:none;
+      border-color:#2c8c6b;
     }
 
-    /* select modern */
-    .input-select {
-      cursor: pointer;
-      appearance: none;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%235b708b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
-      background-repeat: no-repeat;
-      background-position: right 18px center;
-    }
-
-    /* role chips preview */
-    .role-hint {
-      display: flex;
-      gap: 12px;
-      margin-top: 6px;
-      font-size: 0.7rem;
-      color: #7d95b3;
-    }
-
-    .role-hint span {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* button */
     .login-btn {
-      width: 100%;
-      background: #1b5e48;
-      border: none;
-      padding: 14px 20px;
-      border-radius: 44px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      transition: all 0.25s;
-      margin-top: 16px;
-      box-shadow: 0 4px 10px -4px rgba(27, 94, 72, 0.3);
+      margin-top:20px;
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:25px;
+      background:#1b5e48;
+      color:white;
+      font-weight:600;
+      cursor:pointer;
     }
 
     .login-btn:hover {
-      background: #0e4535;
-      transform: scale(0.98);
-      box-shadow: 0 6px 14px -6px #145e46;
+      background:#0e4535;
     }
 
-    /* footer link */
     .footer-note {
-      text-align: center;
-      margin-top: 28px;
-      font-size: 0.7rem;
-      color: #869bb8;
-    }
-
-    .footer-note i {
-      margin: 0 4px;
-    }
-
-    /* animated dots */
-    @keyframes subtlePulse {
-      0% { opacity: 0.6; }
-      100% { opacity: 1; }
-    }
-
-    /* responsive */
-    @media (max-width: 520px) {
-      .login-card {
-        padding: 32px 24px 36px;
-      }
-      .brand h1 {
-        font-size: 1.6rem;
-      }
-      .welcome-text h2 {
-        font-size: 1.4rem;
-      }
+      margin-top:20px;
+      font-size:0.75rem;
+      text-align:center;
+      color:#8ca0c0;
     }
   </style>
 </head>
+
 <body>
 
 <div class="login-container">
-  
+
   <div class="brand">
     <div class="brand-icon">
       <i class="fas fa-leaf"></i>
@@ -253,83 +116,55 @@
   <div class="login-card">
     <div class="welcome-text">
       <h2>Welcome back</h2>
-      <p>Sign in to access your circular dashboard</p>
+      <p>Sign in to access your dashboard</p>
     </div>
 
     <div class="input-group">
-      <div class="input-label">
-        <i class="fas fa-envelope"></i>
-        <span>Email address</span>
-      </div>
-      <input type="email" id="email" class="input-field" placeholder="hello@ekokintsugi.com" autocomplete="email">
+      <div class="input-label">Email</div>
+      <input type="email" id="email" class="input-field" placeholder="Enter email">
     </div>
 
     <div class="input-group">
-      <div class="input-label">
-        <i class="fas fa-user-tag"></i>
-        <span>Role</span>
-      </div>
-      <select id="role" class="input-field input-select">
-        <option value="" disabled selected>— Select your role —</option>
-        <option value="user">👤 User · circular participant</option>
-        <option value="admin">🛡️ Admin · operations & returns</option>
+      <div class="input-label">Role</div>
+      <select id="role" class="input-field">
+        <option value="">Select Role</option>
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
       </select>
-      <div class="role-hint">
-        <span><i class="fas fa-shoe-prints"></i> Users: track shoes, earn points</span>
-        <span style="margin-left: auto;"><i class="fas fa-chart-line"></i> Admin: manage returns</span>
-      </div>
     </div>
 
-    <button class="login-btn" onclick="login()">
-      <i class="fas fa-arrow-right-to-bracket"></i> Continue
-    </button>
+    <button class="login-btn" onclick="login()">Login</button>
 
     <div class="footer-note">
-      <i class="fas fa-recycle"></i> Part of the 8‑week circular sprint · pilot program
+      Circular pilot · 8 week program
     </div>
   </div>
+
 </div>
 
 <script>
-  function login() {
-    const email = document.getElementById("email").value.trim();
-    const role = document.getElementById("role").value;
+function login() {
+  const email = document.getElementById("email").value.trim();
+  const role = document.getElementById("role").value;
 
-    if (!email) {
-      alert("📧 Please enter your email address");
-      document.getElementById("email").focus();
-      return;
-    }
-
-    if (!role) {
-      alert("👤 Please select your role (User or Admin)");
-      return;
-    }
-
-    // Basic email format validation
-    const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      alert("✉️ Please enter a valid email address");
-      return;
-    }
-
-    // Role-based navigation (preserves original behavior)
-    if (role === "admin") {
-      // Admin goes to admin dashboard
-      window.location.href = "admin.html";
-    } else if (role === "user") {
-      // User goes to main flow with email param (QR & dashboard access)
-      window.location.href = "index.html?email=" + encodeURIComponent(email);
-    }
+  if (!email) {
+    alert("Enter email");
+    return;
   }
 
-  // Allow Enter key submission
-  const inputs = document.querySelectorAll('#email, #role');
-  inputs.forEach(input => {
-    input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') login();
-    });
-  });
+  if (!role) {
+    alert("Select role");
+    return;
+  }
+
+  // ✅ FINAL CORRECT FLOW
+  if (role === "admin") {
+    window.location.href = "admin.html";
+  } else {
+    // 🔥 FIXED: user goes to admin → auto redirect to dashboard
+    window.location.href = "admin.html?email=" + encodeURIComponent(email);
+  }
+}
 </script>
 
 </body>
