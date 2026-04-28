@@ -754,6 +754,198 @@ await redirectUserIfNeeded();
   
   // Initial load
   loadDashboardData();
+</script><script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { 
+  getFirestore, collection, getDocs, addDoc, doc, updateDoc,
+  query, where
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+// Firebase config
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "ekokintsugi-pilot",
+  storageBucket: "ekokintsugi-pilot.appspot.com",
+  messagingSenderId: "79027793730",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 🔥 USER REDIRECT
+const params = new URLSearchParams(window.location.search);
+const emailFromLogin = params.get("email");
+
+async function redirectUserIfNeeded() {
+  if (!emailFromLogin) return;
+
+  const snapshot = await getDocs(collection(db, "users"));
+
+  let found = false;
+
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    if (data.email === emailFromLogin) {
+      found = true;
+      window.location.href = "dashboard.html?id=" + docSnap.id;
+    }
+  });
+
+  if (!found) alert("User not found");
+}
+
+await redirectUserIfNeeded();
+
+// 🔥 ADD USER
+window.addUser = async function() {
+  try {
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("emailInput").value;
+
+    if (!name || !email) {
+      alert("Fill required fields");
+      return;
+    }
+
+    const snapshot = await getDocs(collection(db, "users"));
+
+    if (snapshot.size >= 10) {
+      alert("Max 10 users allowed");
+      return;
+    }
+
+    const docRef = await addDoc(collection(db, "users"), {
+      name,
+      email,
+      role: document.getElementById("roleInput").value,
+      points: Number(document.getElementById("pointsInput").value || 0),
+      shoeId: document.getElementById("shoeIdInput").value,
+      status: "assigned"
+    });
+
+    const qrUrl = window.location.origin + "/dashboard.html?id=" + docRef.id;
+
+    alert("✅ User added!\nQR URL:\n" + qrUrl);
+
+    loadDashboardData();
+
+  } catch (e) {
+    alert("Error: " + e.message);
+  }
+};
+
+// 🔥 LOAD USERS + RETURNS
+async function loadDashboardData() {
+  const usersSnapshot = await getDocs(collection(db, "users"));
+  const users = [];
+
+  usersSnapshot.forEach(docSnap => {
+    users.push({ id: docSnap.id, data: docSnap.data() });
+  });
+
+  renderUsers(users);
+}
+
+// 🔥 RENDER USERS
+function renderUsers(users) {
+  const grid = document.getElementById("usersGrid");
+
+  if (!users.length) {
+    grid.innerHTML = "<p>No users</p>";
+    return;
+  }
+
+  let html = "";
+
+  users.forEach(user => {
+    const data = user.data;
+
+    html += `
+      <div class="user-card">
+        <div class="card-body">
+          <b>${data.name}</b><br>
+          ${data.email}<br>
+          Shoe: ${data.shoeId}<br>
+
+          <a href="dashboard.html?id=${user.id}">Open Dashboard</a>
+        </div>
+      </div>
+    `;
+  });
+
+  grid.innerHTML = html;
+}
+
+// INIT
+loadDashboardData();
+
 </script>
+<!-- 🔥 ONLY CHANGE: Added Home Button in header -->
+
+<body>
+
+<div class="dashboard-container">
+
+  <!-- Header -->
+
+  <div class="saas-header">
+    <div class="logo-area">
+      <h1><i class="fas fa-leaf"></i> EkoKintsugi · Admin</h1>
+      <p>Circular economy operations · returns & lifecycle</p>
+    </div>
+
+```
+<!-- ✅ NEW BUTTON -->
+<div style="display:flex; gap:10px; align-items:center;">
+  <button onclick="goHome()" class="btn-small" style="background:#0f3a2e;">
+    🏠 Home
+  </button>
+
+  <div class="badge-pilot">
+    <i class="fas fa-calendar-week"></i> Pilot · 8-week circular sprint
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- KEEP EVERYTHING SAME BELOW -->
+
+  <!-- KPI Cards -->
+
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card"><div class="stat-number" id="statTotal">0</div><div class="stat-label"><i class="fas fa-users"></i> Total members</div></div>
+    <div class="stat-card"><div class="stat-number" id="statReturnRequested">0</div><div class="stat-label"><i class="fas fa-exchange-alt"></i> Return requests</div></div>
+    <div class="stat-card"><div class="stat-number" id="statCompleted">0</div><div class="stat-label"><i class="fas fa-check-circle"></i> Completed</div></div>
+    <div class="stat-card"><div class="stat-number" id="statAvgReviews">0</div><div class="stat-label"><i class="fas fa-star"></i> Avg reviews</div></div>
+  </div>
+
+  <!-- Users section -->
+
+  <div class="section-title">
+    <i class="fas fa-id-card"></i> Registered members
+    <span id="userCountBadge">0</span>
+  </div>
+
+  <div id="usersGrid" class="users-grid">
+    <div class="user-card">
+      <div class="card-body" style="text-align:center; padding:40px;">
+        Loading participants...
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function goHome() {
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+
 </body>
 </html>
