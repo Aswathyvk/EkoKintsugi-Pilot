@@ -184,6 +184,49 @@ document.addEventListener("keypress", function(e) {
     login();
   }
 });
+</script><script>
+function login() {
+  const email = document.getElementById("email").value.trim();
+  const role = document.getElementById("role").value;
+
+  if (!email) {
+    alert("Enter email");
+    return;
+  }
+
+  if (!role) {
+    alert("Select role");
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    alert("Enter valid email");
+    return;
+  }
+
+  // 🔐 ADMIN
+  if (role === "admin") {
+    if (email !== "admin@gmail.com") {
+      alert("Only admin@gmail.com allowed");
+      return;
+    }
+
+    window.location.href = "admin.html";
+  }
+
+  // 👤 USER (FIXED)
+  else {
+    window.location.href = "dashboard.html?email=" + encodeURIComponent(email);
+  }
+}
+
+// Enter key support
+document.addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    login();
+  }
+});
 </script>
 
 </body>
