@@ -489,6 +489,38 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  // 🔥 AUTO REDIRECT FOR USER LOGIN
+const params = new URLSearchParams(window.location.search);
+const emailFromLogin = params.get("email");
+
+async function redirectUserIfNeeded() {
+  if (!emailFromLogin) return; // admin normal flow
+
+  try {
+    const snapshot = await getDocs(collection(db, "users"));
+
+    let found = false;
+
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+
+      if (data.email === emailFromLogin) {
+        found = true;
+        window.location.href = "dashboard.html?id=" + docSnap.id;
+      }
+    });
+
+    if (!found) {
+      alert("User not found. Contact admin.");
+    }
+
+  } catch (e) {
+    console.error("Redirect error:", e);
+  }
+}
+
+// 🚀 RUN BEFORE LOADING ADMIN UI
+await redirectUserIfNeeded();
 
   // Helper: status badge for user status
   function getUserStatusBadge(status) {
