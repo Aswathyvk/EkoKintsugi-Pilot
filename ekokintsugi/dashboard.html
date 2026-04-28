@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>EkoKintsugi · My Dashboard</title>
+  
+  <!-- Google Fonts + Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background: #f5f7fb;
+      color: #0f172a;
+      padding: 24px 20px 56px;
+    }
+
+    .dashboard-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      margin-bottom: 24px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #5b6e8c;
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #1e4a3b; }
+
+    .user-header {
+      background: linear-gradient(135deg, #1a3c34, #2b6e4f);
+      border-radius: 32px;
+      padding: 28px 24px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .user-header::before {
+      content: "♻️";
+      position: absolute;
+      right: -20px;
+      bottom: -20px;
+      font-size: 120px;
+      opacity: 0.1;
+      pointer-events: none;
+    }
+    .user-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .user-email {
+      opacity: 0.85;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(4px);
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* Stats Cards */
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .stat-mini {
+      flex: 1;
+      background: white;
+      border-radius: 20px;
+      padding: 14px;
+      text-align: center;
+      border: 1px solid #eef2f8;
+    }
+    .stat-mini-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1e4a3b;
+    }
+    .stat-mini-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      color: #6c7e9e;
+      margin-top: 4px;
+    }
+
+    /* Card Component */
+    .card {
+      background: white;
+      border-radius: 28px;
+      margin-bottom: 24px;
+      border: 1px solid #eef2f9;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 28px -14px rgba(0, 0, 0, 0.08);
+    }
+    .card-header {
+      padding: 20px 24px 0 24px;
+    }
+    .card-header h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-header p {
+      font-size: 0.7rem;
+      color: #7e95b3;
+      margin-top: 6px;
+    }
+    .card-body {
+      padding: 20px 24px;
+    }
+    .card-footer {
+      padding: 16px 24px 24px;
+      border-top: 1px solid #f0f4fc;
+    }
+
+    /* Info Grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .info-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #6c86a3;
+    }
+    .info-value {
+      font-weight: 600;
+      color: #1e2f40;
+      word-break: break-word;
+    }
+    .info-value code {
+      background: #f1f5f9;
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #5b6e8c;
+      margin-bottom: 6px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 20px;
+      border: 1.5px solid #e2edf2;
+      font-family: 'Inter', monospace;
+      font-size: 0.9rem;
+      transition: 0.2s;
+      background: white;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #2b6e4f;
+      box-shadow: 0 0 0 3px rgba(43, 110, 79, 0.08);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Rating Row */
+    .ratings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .rating-input {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .rating-input label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #5b6e8c;
+    }
+
+    /* Buttons */
+    .btn {
+      border: none;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+    .btn-primary {
+      background: #1e4a3b;
+      color: white;
+      width: 100%;
+    }
+    .btn-primary:hover {
+      background: #0f3a2e;
+      transform: scale(0.98);
+    }
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #1e4a3b;
+      border: 1px solid #dce5ef;
+    }
+    .btn-secondary:hover {
+      background: #e6edf4;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid #2b6e4f;
+      color: #2b6e4f;
+    }
+    .btn-outline:hover {
+      background: #eef9f3;
+    }
+    .btn-warning {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+    .btn-warning:hover {
+      background: #fde68a;
+    }
+
+    /* Progress bar */
+    .progress-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .progress-bar-wrapper {
+      flex: 1;
+      background: #e9eef3;
+      border-radius: 20px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      background: linear-gradient(90deg, #2b6e4f, #3ba576);
+      width: 0%;
+      height: 100%;
+      border-radius: 20px;
+      transition: width 0.3s;
+    }
+    .progress-text {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #1e4a3b;
+    }
+
+    /* Return card specific */
+    .return-card {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    hr {
+      display: none;
+    }
+
+    @media (max-width: 560px) {
+      body { padding: 16px; }
+      .info-grid { grid-template-columns: 1fr; }
+      .ratings-grid { grid-template-columns: 1fr 1fr; }
+      .user-name { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+  
+  <!-- Back Navigation -->
+  <div class="header">
+    <a href="javascript:history.back()" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
+  </div>
+
+  <!-- User Profile Header (dynamic) -->
+  <div class="user-header" id="userHeader">
+    <div class="user-name" id="userName">Loading...</div>
+    <div class="user-email" id="userEmail">—</div>
+    <div class="status-badge" id="userStatusBadge"><i class="fas fa-spinner fa-pulse"></i> Loading</div>
+  </div>
+
+  <!-- Mini stats row -->
+  <div class="stats-row">
+    <div class="stat-mini"><div class="stat-mini-value" id="pointsValue">0</div><div class="stat-mini-label"><i class="fas fa-coins"></i> Points</div></div>
+    <div class="stat-mini"><div class="stat-mini-value" id="shoeStatusValue">—</div><div class="stat-mini-label"><i class="fas fa-shoe-prints"></i> Shoe Status</div></div>
+    <div class="stat-mini"><div class="stat-mini-value" id="treeValue">—</div><div class="stat-mini-label"><i class="fas fa-tree"></i> Tree</div></div>
+  </div>
+
+  <!-- User Details Card -->
+  <div class="card">
+    <div class="card-header">
+      <h2><i class="fas fa-id-card"></i> Circular Profile</h2>
+      <p>Your impact & shoe lifecycle information</p>
+    </div>
+    <div class="card-body">
+      <div class="info-grid" id="userDetailsGrid">
+        <div class="info-item"><span class="info-label">Role</span><span class="info-value" id="roleValue">—</span></div>
+        <div class="info-item"><span class="info-label">Shoe ID</span><span class="info-value"><code id="shoeIdValue">—</code></span></div>
+        <div class="info-item"><span class="info-label">Plant Type</span><span class="info-value" id="plantValue">—</span></div>
+        <div class="info-item"><span class="info-label">Location</span><span class="info-value" id="locationValue">—</span></div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-secondary" onclick="window.markReturned()" id="returnedBtn"><i class="fas fa-undo-alt"></i> Mark Shoe Returned</button>
+    </div>
+  </div>
+
+  <!-- Weekly Review Card -->
+  <div class="card">
+    <div class="card-header">
+      <h2><i class="fas fa-pen-fancy"></i> Weekly Review</h2>
+      <p>Share your experience and earn impact points</p>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <label><i class="fas fa-calendar-week"></i> Select Week</label>
+        <select id="week">
+          <option value="">Choose week (1-8)</option>
+          <option value="1">Week 1</option><option value="2">Week 2</option><option value="3">Week 3</option>
+          <option value="4">Week 4</option><option value="5">Week 5</option><option value="6">Week 6</option>
+          <option value="7">Week 7</option><option value="8">Week 8</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-clock"></i> Days worn / Hours per day</label>
+        <div style="display: flex; gap: 10px;">
+          <input id="days" placeholder="Days worn" style="flex:1">
+          <input id="hours" placeholder="Hours/day" style="flex:1">
+        </div>
+      </div>
+      <div class="ratings-grid">
+        <div class="rating-input"><label>Comfort (1-5)</label><input id="comfort" placeholder="1-5" type="number" min="1" max="5"></div>
+        <div class="rating-input"><label>Fit (1-5)</label><input id="fit" placeholder="1-5" type="number" min="1" max="5"></div>
+        <div class="rating-input"><label>Sole (1-5)</label><input id="sole" placeholder="1-5" type="number" min="1" max="5"></div>
+        <div class="rating-input"><label>Material (1-5)</label><input id="material" placeholder="1-5" type="number" min="1" max="5"></div>
+        <div class="rating-input"><label>Stitching (1-5)</label><input id="stitching" placeholder="1-5" type="number" min="1" max="5"></div>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-comment"></i> Feedback / Issues</label>
+        <textarea id="feedback" placeholder="Share your experience with the shoes..."></textarea>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-camera"></i> Upload image (optional)</label>
+        <input type="file" id="image" accept="image/*">
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary" onclick="window.submitReview()"><i class="fas fa-paper-plane"></i> Submit Review</button>
+      <div class="progress-container" style="margin-top: 16px;">
+        <div class="progress-bar-wrapper"><div class="progress-bar-fill" id="reviewProgressFill" style="width:0%"></div></div>
+        <div class="progress-text" id="progressText">0/8 weeks</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Return Request Card -->
+  <div class="card return-card">
+    <div class="card-header">
+      <h2><i class="fas fa-truck-ramp-box"></i> Request Shoe Return</h2>
+      <p>Initiate circular return process</p>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <label><i class="fas fa-question-circle"></i> Reason for return</label>
+        <textarea id="reason" placeholder="Why are you returning the shoes? (size, defect, etc.)" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-clipboard-list"></i> Condition</label>
+        <select id="condition">
+          <option value="">Select condition</option>
+          <option value="Good">Good - Light wear</option>
+          <option value="Fair">Fair - Moderate use</option>
+          <option value="Damaged">Damaged - Visible defects</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-warning" onclick="window.requestReturn()"><i class="fas fa-exchange-alt"></i> Request Return</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+  import { 
+    getFirestore, doc, getDoc, updateDoc,
+    collection, addDoc, query, where, getDocs
+  } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAXnKjLJm6Wb0b9MTdz-Rh2vxddl6EVsqc",
+    authDomain: "ekokintsugi-pilot.firebaseapp.com",
+    projectId: "ekokintsugi-pilot",
+    storageBucket: "ekokintsugi-pilot.firebasestorage.app",
+    messagingSenderId: "79027793730",
+    appId: "1:79027793730:web:6e858a22951a2da85f22db"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get("id");
+  let currentUserData = null;
+
+  // Helper: status badge text/icon
+  function getStatusDisplay(status) {
+    const st = (status || "assigned").toLowerCase();
+    if (st === "assigned") return `<i class="fas fa-check-circle"></i> Active · Assigned`;
+    if (st === "returned") return `<i class="fas fa-undo-alt"></i> Returned`;
+    if (st === "recycled") return `<i class="fas fa-recycle"></i> Recycled`;
+    if (st === "repair") return `<i class="fas fa-tools"></i> Repair`;
+    if (st === "reuse") return `<i class="fas fa-redo-alt"></i> Reuse`;
+    return `<i class="fas fa-info-circle"></i> ${status}`;
+  }
+
+  // Load user data and reviews
+  async function loadUser() {
+    if (!userId) {
+      document.getElementById("userName").innerHTML = "No User ID";
+      return;
+    }
+    try {
+      const docSnap = await getDoc(doc(db, "users", userId));
+      if (!docSnap.exists()) {
+        document.getElementById("userName").innerHTML = "User not found";
+        return;
+      }
+      const data = docSnap.data();
+      currentUserData = data;
+      
+      // Update header
+      document.getElementById("userName").innerHTML = data.name || "Member";
+      document.getElementById("userEmail").innerHTML = data.email || "—";
+      document.getElementById("userStatusBadge").innerHTML = getStatusDisplay(data.status);
+      // Stats
+      document.getElementById("pointsValue").innerHTML = data.points || 0;
+      document.getElementById("shoeStatusValue").innerHTML = data.shoeStatus || "Delivered";
+      document.getElementById("treeValue").innerHTML = data.treeId ? "🌳 Active" : "—";
+      // Details
+      document.getElementById("roleValue").innerHTML = data.role || "Customer";
+      document.getElementById("shoeIdValue").innerHTML = data.shoeId || "—";
+      document.getElementById("plantValue").innerHTML = data.plantType || "Neem";
+      document.getElementById("locationValue").innerHTML = data.location || "India";
+      
+      // Show/hide return button if already returned
+      const statusLower = (data.status || "").toLowerCase();
+      if (statusLower === "returned" || statusLower === "recycled" || statusLower === "repair") {
+        const btn = document.getElementById("returnedBtn");
+        btn.disabled = true;
+        btn.style.opacity = "0.5";
+        btn.innerHTML = '<i class="fas fa-check"></i> Already processed';
+      } else {
+        document.getElementById("returnedBtn").disabled = false;
+        document.getElementById("returnedBtn").innerHTML = '<i class="fas fa-undo-alt"></i> Mark Shoe Returned';
+      }
+      
+      await loadProgress();
+    } catch(e) {
+      console.error(e);
+      document.getElementById("userName").innerHTML = "Error loading";
+    }
+  }
+
+  // Mark shoe as returned
+  window.markReturned = async function() {
+    if (!userId) return;
+    try {
+      await updateDoc(doc(db, "users", userId), { status: "returned" });
+      alert("✓ Shoe marked as returned. Admin will process further.");
+      loadUser();
+    } catch(e) {
+      alert("Error: " + e.message);
+    }
+  };
+
+  // Submit weekly review
+  window.submitReview = async function() {
+    const week = Number(document.getElementById("week").value);
+    if (!week || week < 1 || week > 8) {
+      alert("Please select a valid week (1-8)");
+      return;
+    }
+    // Check duplicate
+    const q = query(collection(db, "reviews"), where("userId", "==", userId), where("week", "==", week));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      alert("You already submitted a review for week " + week);
+      return;
+    }
+    
+    const file = document.getElementById("image").files[0];
+    let imageName = file ? file.name : "";
+    
+    try {
+      await addDoc(collection(db, "reviews"), {
+        userId,
+        week,
+        days: document.getElementById("days").value,
+        hours: document.getElementById("hours").value,
+        comfort: document.getElementById("comfort").value,
+        fit: document.getElementById("fit").value,
+        sole: document.getElementById("sole").value,
+        material: document.getElementById("material").value,
+        stitching: document.getElementById("stitching").value,
+        feedback: document.getElementById("feedback").value,
+        image: imageName,
+        createdAt: new Date()
+      });
+      alert("✅ Review submitted! +10 impact points.");
+      // Clear review form partially
+      document.getElementById("week").value = "";
+      document.getElementById("days").value = "";
+      document.getElementById("hours").value = "";
+      document.getElementById("comfort").value = "";
+      document.getElementById("fit").value = "";
+      document.getElementById("sole").value = "";
+      document.getElementById("material").value = "";
+      document.getElementById("stitching").value = "";
+      document.getElementById("feedback").value = "";
+      document.getElementById("image").value = "";
+      await loadProgress();
+      // Reload user to refresh points (optional)
+      loadUser();
+    } catch(e) {
+      alert("Error: " + e.message);
+    }
+  };
+
+  // Load review progress
+  async function loadProgress() {
+    if (!userId) return;
+    const q = query(collection(db, "reviews"), where("userId", "==", userId));
+    const snapshot = await getDocs(q);
+    const count = snapshot.size;
+    const percent = (count / 8) * 100;
+    document.getElementById("reviewProgressFill").style.width = percent + "%";
+    document.getElementById("progressText").innerHTML = `${count}/8 weeks completed`;
+  }
+
+  // Request return
+  window.requestReturn = async function() {
+    const reason = document.getElementById("reason").value.trim();
+    const condition = document.getElementById("condition").value;
+    if (!reason || !condition) {
+      alert("Please fill in both reason and condition");
+      return;
+    }
+    // Check existing return request
+    const q = query(collection(db, "returns"), where("userId", "==", userId));
+    const existing = await getDocs(q);
+    if (!existing.empty) {
+      alert("You already have a return request pending.");
+      return;
+    }
+    try {
+      await addDoc(collection(db, "returns"), {
+        userId,
+        reason,
+        condition,
+        status: "pending",
+        createdAt: new Date()
+      });
+      await updateDoc(doc(db, "users", userId), { status: "return_requested" });
+      alert("📦 Return request submitted! Admin will review.");
+      loadUser();
+      // Clear fields
+      document.getElementById("reason").value = "";
+      document.getElementById("condition").value = "";
+    } catch(e) {
+      alert("Error: " + e.message);
+    }
+  };
+  
+  loadUser();
+</script>
+</body>
+</html>

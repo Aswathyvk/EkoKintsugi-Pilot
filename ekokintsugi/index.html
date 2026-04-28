@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- QR -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+    }
+
+    button {
+      padding: 10px;
+      width: 100%;
+      background: green;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>Add User</h2>
+
+<input id="name" placeholder="Name">
+<input id="email" placeholder="Email">
+<input id="role" placeholder="Role">
+<input id="points" type="number" placeholder="Points">
+<input id="shoeId" placeholder="Shoe ID">
+
+<button onclick="addUser()">Add User</button>
+
+<hr>
+
+<div id="output"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc } 
+from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAXnKjLJm6Wb0b9MTdz-Rh2vxddl6EVsqc",
+  authDomain: "ekokintsugi-pilot.firebaseapp.com",
+  projectId: "ekokintsugi-pilot",
+  storageBucket: "ekokintsugi-pilot.firebasestorage.app",
+  messagingSenderId: "79027793730",
+  appId: "1:79027793730:web:6e858a22951a2da85f22db"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+// 🔹 LOAD USERS
+async function loadUsers() {
+
+  const output = document.getElementById("output");
+  const snapshot = await getDocs(collection(db, "users"));
+
+  let html = "";
+
+  snapshot.forEach(doc => {
+    const data = doc.data();
+
+    html += `
+      <div class="card">
+        <h3>${data.name}</h3>
+        <p>${data.email}</p>
+        <p><b>Shoe:</b> ${data.shoeId}</p>
+
+        <a href="dashboard.html?id=${doc.id}">Open Dashboard</a>
+
+        <br><br>
+        <canvas id="qr-${doc.id}"></canvas>
+      </div>
+    `;
+  });
+
+  output.innerHTML = html;
+
+  // 🔥 QR FIXED HERE
+  snapshot.forEach(doc => {
+    const canvas = document.getElementById(`qr-${doc.id}`);
+
+    const url = "http://YOUR-IP:5500/dashboard.html?id=" + doc.id;
+
+    QRCode.toCanvas(canvas, url, function (error) {
+      if (error) console.error(error);
+    });
+  });
+}
+
+
+// 🔹 ADD USER
+async function addUser() {
+
+  const snapshot = await getDocs(collection(db, "users"));
+
+  if (snapshot.size >= 10) {
+    alert("Only 10 users allowed!");
+    return;
+  }
+
+  await addDoc(collection(db, "users"), {
+    name: document.getElementById("name").value,
+    email: document.getElementById("email").value,
+    role: document.getElementById("role").value,
+    points: Number(document.getElementById("points").value || 0),
+    shoeId: document.getElementById("shoeId").value,
+    status: "assigned"
+  });
+
+  alert("User added!");
+  loadUsers();
+}
+
+window.addUser = addUser;
+
+loadUsers();
+
+</script>
+
+</body>
+</html>
