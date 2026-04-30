@@ -1,951 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>EkoKintsugi · Admin Studio</title>
-  
-  <!-- Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EkoKintsugi Admin</title>
 
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-      background: #f5f8fc;
-      color: #0f172a;
-      padding: 28px 24px 56px;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
 
-    .dashboard-container {
-      max-width: 1440px;
-      margin: 0 auto;
-    }
+<!-- ✅ Excel Library -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
-    /* ===== MODERN HEADER ===== */
-    .saas-header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 32px;
-      gap: 20px;
-    }
-
-    .logo-area h1 {
-      font-size: 1.85rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #115e4e, #2c8c6b);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .logo-area p {
-      color: #5b6e8c;
-      font-size: 0.85rem;
-      margin-top: 6px;
-    }
-
-    .badge-pilot {
-      background: rgba(44, 140, 107, 0.08);
-      border: 1px solid rgba(44, 140, 107, 0.25);
-      padding: 8px 20px;
-      border-radius: 60px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: #1e6e4a;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      backdrop-filter: blur(2px);
-    }
-
-    /* ===== KPI CARDS ===== */
-    .stats-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-bottom: 32px;
-    }
-
-    .stat-card {
-      background: white;
-      border-radius: 28px;
-      padding: 20px 18px;
-      flex: 1 1 180px;
-      border: 1px solid #eef2f8;
-      box-shadow: 0 4px 12px -8px rgba(0, 0, 0, 0.04);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 20px 28px -14px rgba(0, 0, 0, 0.08);
-    }
-
-    .stat-number {
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: #165a48;
-      line-height: 1.2;
-    }
-
-    .stat-label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #5f7a9c;
-      margin-top: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* ===== PROGRESS CARD (8 weeks) ===== */
-    .progress-card {
-      background: white;
-      border-radius: 28px;
-      padding: 22px 28px;
-      margin-bottom: 36px;
-      border: 1px solid #edf2f9;
-      box-shadow: 0 6px 14px -10px rgba(0, 0, 0, 0.04);
-    }
-
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      font-weight: 500;
-      font-size: 0.8rem;
-      color: #2c4b6e;
-    }
-
-    .progress-track {
-      background: #eaf0f6;
-      border-radius: 40px;
-      height: 8px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      background: linear-gradient(90deg, #2b7555, #46b38a);
-      width: 0%;
-      height: 100%;
-      border-radius: 40px;
-      transition: width 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-
-    .week-note {
-      font-size: 0.7rem;
-      color: #6682a2;
-      margin-top: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* ===== SECTION TITLES ===== */
-    .section-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .section-title i {
-      color: #2c8c6b;
-    }
-
-    /* ===== USERS GRID (cards layout) ===== */
-    .users-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 24px;
-      margin-bottom: 48px;
-    }
-
-    .user-card {
-      background: white;
-      border-radius: 28px;
-      border: 1px solid #eef2f9;
-      overflow: hidden;
-      transition: all 0.2s;
-      box-shadow: 0 4px 12px -8px rgba(0, 0, 0, 0.04);
-    }
-
-    .user-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 24px 32px -16px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-header {
-      padding: 20px 24px 12px 24px;
-      border-bottom: 1px solid #f0f4fc;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .user-name {
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #0f2d3d;
-    }
-
-    .user-email {
-      font-size: 0.7rem;
-      color: #6c86a3;
-      margin-top: 4px;
-    }
-
-    .review-count {
-      background: #eef3fc;
-      border-radius: 40px;
-      padding: 4px 12px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: #2c6e5c;
-    }
-
-    .card-body {
-      padding: 18px 24px;
-    }
-
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      font-size: 0.85rem;
-    }
-
-    .info-label {
-      color: #6c86a3;
-      font-weight: 500;
-    }
-
-    .info-value {
-      font-weight: 600;
-      color: #1e2f40;
-    }
-
-    /* status badges */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
-      border-radius: 40px;
-      font-size: 0.7rem;
-      font-weight: 600;
-    }
-
-    .badge-assigned { background: #e1f0fa; color: #1a6d9f; }
-    .badge-returned { background: #ffe6e5; color: #bc3f2e; }
-    .badge-repair { background: #fff0e0; color: #c97e0a; }
-    .badge-reuse { background: #e0f0fa; color: #2c7a9e; }
-    .badge-recycle { background: #e0f6ec; color: #1c7e54; }
-
-    .points-section {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid #f0f4fc;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .points-input {
-      flex: 1;
-      padding: 10px 14px;
-      border-radius: 16px;
-      border: 1px solid #e2edf2;
-      font-family: 'Inter', monospace;
-      font-size: 0.85rem;
-      transition: 0.2s;
-    }
-
-    .points-input:focus {
-      outline: none;
-      border-color: #2f8b64;
-      box-shadow: 0 0 0 3px rgba(47, 139, 100, 0.08);
-    }
-
-    .btn-small {
-      background: #1b5e48;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 40px;
-      font-weight: 600;
-      font-size: 0.75rem;
-      color: white;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .btn-small:hover {
-      background: #0e4535;
-    }
-
-    /* ===== RETURNS TABLE (modern admin panel) ===== */
-    .admin-card {
-      background: white;
-      border-radius: 32px;
-      border: 1px solid #eef2fa;
-      overflow: hidden;
-      box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.04);
-    }
-
-    .admin-header {
-      padding: 20px 28px 0px 28px;
-      border-bottom: 1px solid #f0f4fc;
-    }
-
-    .admin-header h3 {
-      font-size: 1.3rem;
-      font-weight: 600;
-    }
-
-    .admin-header p {
-      font-size: 0.75rem;
-      color: #5f7f9c;
-      margin-top: 6px;
-    }
-
-    .table-wrapper {
-      overflow-x: auto;
-      padding: 0 0 8px 0;
-    }
-
-    .returns-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-
-    .returns-table th {
-      text-align: left;
-      padding: 18px 16px;
-      font-weight: 600;
-      color: #294c66;
-      background: #fefefe;
-      border-bottom: 1px solid #eef2f8;
-    }
-
-    .returns-table td {
-      padding: 16px;
-      border-bottom: 1px solid #f4f8fe;
-      vertical-align: middle;
-    }
-
-    .return-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      border-radius: 30px;
-      font-size: 0.7rem;
-      font-weight: 600;
-    }
-
-    .status-pending { background: #fff4e5; color: #c97e0a; }
-    .status-approved { background: #e0f2fe; color: #1a6d9f; }
-    .status-completed { background: #e0f6ec; color: #1c7e54; }
-
-    .btn-outline {
-      background: none;
-      border: 1px solid #dce5ef;
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 0.7rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: 0.1s;
-      color: #1f674d;
-    }
-
-    .btn-outline:hover {
-      background: #eef9f3;
-      border-color: #328f68;
-    }
-
-    select.action-select {
-      padding: 6px 10px;
-      border-radius: 30px;
-      border: 1px solid #dce5ef;
-      background: white;
-      font-size: 0.7rem;
-      font-weight: 500;
-      color: #1f3b4c;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 56px !important;
-      color: #7f99b5;
-    }
-
-    @media (max-width: 780px) {
-      body { padding: 18px; }
-      .users-grid { grid-template-columns: 1fr; }
-      .returns-table th, .returns-table td { padding: 12px 8px; }
-      .logo-area h1 { font-size: 1.4rem; }
-    }
-  </style>
+<style>
+body { font-family: Inter; background:#f5f8fc; padding:20px; }
+.btn { padding:10px; background:#1b5e48; color:white; border:none; border-radius:5px; cursor:pointer; }
+.card { background:white; padding:15px; margin:10px 0; border-radius:10px; }
+</style>
 </head>
+
 <body>
 
-<div class="dashboard-container">
-  
-  <!-- Header -->
-  <div class="saas-header">
-    <div class="logo-area">
-      <h1><i class="fas fa-leaf"></i> EkoKintsugi · Admin</h1>
-      <p>Circular economy operations · returns & lifecycle</p>
-    </div>
-    <div class="badge-pilot">
-      <i class="fas fa-calendar-week"></i> Pilot · 8‑week circular sprint
-    </div>
-  </div>
+<h2>Admin Panel</h2>
 
-  <!-- KPI Cards -->
-  <div class="stats-grid" id="statsGrid">
-    <div class="stat-card"><div class="stat-number" id="statTotal">0</div><div class="stat-label"><i class="fas fa-users"></i> Total members</div></div>
-    <div class="stat-card"><div class="stat-number" id="statReturnRequested">0</div><div class="stat-label"><i class="fas fa-exchange-alt"></i> Return requests</div></div>
-    <div class="stat-card"><div class="stat-number" id="statCompleted">0</div><div class="stat-label"><i class="fas fa-check-circle"></i> Completed</div></div>
-    <div class="stat-card"><div class="stat-number" id="statAvgReviews">0</div><div class="stat-label"><i class="fas fa-star"></i> Avg reviews</div></div>
-  </div>
+<!-- ✅ EXCEL UPLOAD -->
+<input type="file" id="excelFile" accept=".xlsx, .xls">
+<button class="btn" onclick="uploadExcel()">Upload Excel</button>
 
-  <!-- Progress Indicator: 8 weeks -->
-  <div class="progress-card">
-    <div class="progress-header">
-      <span><i class="far fa-calendar-alt"></i> Circular journey · Week <span id="weekNumber">3</span> of 8</span>
-      <span><i class="fas fa-chart-line"></i> <span id="progressPercentLabel">42</span>% completion</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="globalProgressFill" style="width: 42%;"></div>
-    </div>
-    <div class="week-note">
-      <i class="fas fa-recycle"></i> <span id="progressHint">based on return approvals & recycling actions</span>
-    </div>
-  </div>
+<hr>
 
-  <!-- Users section (cards layout) -->
-  <div class="section-title">
-    <i class="fas fa-id-card"></i> Registered members
-    <span style="font-size: 0.7rem; background: #eef2f8; padding: 2px 10px; border-radius: 30px;" id="userCountBadge">0</span>
-  </div>
-  <div id="usersGrid" class="users-grid">
-    <div class="user-card"><div class="card-body" style="text-align:center; padding:40px;">Loading participants...</div></div>
-  </div>
-
-  <!-- Return Requests admin table -->
-  <div class="admin-card">
-    <div class="admin-header">
-      <h3><i class="fas fa-truck-ramp-box"></i> Return requests · lifecycle management</h3>
-      <p>Approve returns, assign final actions (repair/reuse/recycle)</p>
-    </div>
-    <div class="table-wrapper">
-      <table class="returns-table" id="returnsTable">
-        <thead>
-          <tr><th>User</th><th>Reason</th><th>Condition</th><th>Status</th><th>Actions</th></tr>
-        </thead>
-        <tbody id="returnsTableBody">
-          <tr><td colspan="5" class="empty-state">Loading return requests...</td></tr>
-        </tbody>
-       </table>
-    </div>
-  </div>
-</div>
+<div id="usersGrid"></div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-  import { 
-    getFirestore, collection, getDocs, doc, updateDoc,
-    query, where
-  } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAXnKjLJm6Wb0b9MTdz-Rh2vxddl6EVsqc",
-    authDomain: "ekokintsugi-pilot.firebaseapp.com",
-    projectId: "ekokintsugi-pilot",
-    storageBucket: "ekokintsugi-pilot.firebasestorage.app",
-    messagingSenderId: "79027793730",
-    appId: "1:79027793730:web:6e858a22951a2da85f22db"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  // 🔥 AUTO REDIRECT FOR USER LOGIN
-const params = new URLSearchParams(window.location.search);
-const emailFromLogin = params.get("email");
-
-async function redirectUserIfNeeded() {
-  if (!emailFromLogin) return; // admin normal flow
-
-  try {
-    const snapshot = await getDocs(collection(db, "users"));
-
-    let found = false;
-
-    snapshot.forEach(docSnap => {
-      const data = docSnap.data();
-
-      if (data.email === emailFromLogin) {
-        found = true;
-        window.location.href = "dashboard.html?id=" + docSnap.id;
-      }
-    });
-
-    if (!found) {
-      alert("User not found. Contact admin.");
-    }
-
-  } catch (e) {
-    console.error("Redirect error:", e);
-  }
-}
-
-// 🚀 RUN BEFORE LOADING ADMIN UI
-await redirectUserIfNeeded();
-
-  // Helper: status badge for user status
-  function getUserStatusBadge(status) {
-    const st = (status || "assigned").toLowerCase();
-    if (st === "assigned") return '<span class="status-badge badge-assigned"><i class="fas fa-tag"></i> Assigned</span>';
-    if (st === "returned") return '<span class="status-badge badge-returned"><i class="fas fa-exchange-alt"></i> Returned</span>';
-    if (st === "repair") return '<span class="status-badge badge-repair"><i class="fas fa-tools"></i> Repair</span>';
-    if (st === "reuse") return '<span class="status-badge badge-reuse"><i class="fas fa-redo-alt"></i> Reuse</span>';
-    if (st === "recycle") return '<span class="status-badge badge-recycle"><i class="fas fa-recycle"></i> Recycle</span>';
-    return `<span class="status-badge">${status}</span>`;
-  }
-
-  function getReturnStatusBadge(status) {
-    const s = (status || "pending").toLowerCase();
-    if (s === "pending") return '<span class="return-status status-pending"><i class="fas fa-clock"></i> Pending</span>';
-    if (s === "approved") return '<span class="return-status status-approved"><i class="fas fa-check-circle"></i> Approved</span>';
-    if (s === "completed") return '<span class="return-status status-completed"><i class="fas fa-check-double"></i> Completed</span>';
-    return `<span class="return-status">${status}</span>`;
-  }
-
-  function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, (m) => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;')); }
-
-  // Global data storage
-  let usersData = [];
-  let returnsData = [];
-
-  // Compute global stats + progress (8 weeks)
-  function updateStatsAndProgress(users, returns) {
-    const totalUsers = users.length;
-    const returnRequests = returns.length;
-    const completedReturns = returns.filter(r => r.status === "completed").length;
-    
-    let totalReviews = 0;
-    users.forEach(u => { totalReviews += (u.reviewCount || 0); });
-    const avgReviews = totalUsers > 0 ? (totalReviews / totalUsers).toFixed(1) : 0;
-    
-    document.getElementById("statTotal").innerText = totalUsers;
-    document.getElementById("statReturnRequested").innerText = returnRequests;
-    document.getElementById("statCompleted").innerText = completedReturns;
-    document.getElementById("statAvgReviews").innerText = avgReviews;
-    document.getElementById("userCountBadge").innerText = totalUsers;
-    
-    // Progress based on returns completed + recycling/repair actions
-    let progressScore = 0;
-    if (totalUsers > 0) {
-      let completedWeight = completedReturns * 32;
-      let recycledCount = users.filter(u => u.status === "recycle").length;
-      let repairReuseCount = users.filter(u => u.status === "repair" || u.status === "reuse").length;
-      let rawScore = completedWeight + (recycledCount * 38) + (repairReuseCount * 15);
-      let maxScore = (totalUsers * 32) + (totalUsers * 38) + (totalUsers * 15);
-      if (maxScore > 0) progressScore = Math.min(92, (rawScore / maxScore) * 92);
-      progressScore = Math.max(6, Math.floor(progressScore));
-    }
-    const finalPercent = Math.min(100, progressScore);
-    const fillEl = document.getElementById("globalProgressFill");
-    if (fillEl) fillEl.style.width = finalPercent + "%";
-    document.getElementById("progressPercentLabel").innerText = finalPercent;
-    
-    let weekEstimate = Math.floor(finalPercent / 12.5) + 1;
-    weekEstimate = Math.min(8, Math.max(1, weekEstimate));
-    document.getElementById("weekNumber").innerText = weekEstimate;
-    
-    const hintSpan = document.getElementById("progressHint");
-    if (finalPercent >= 80) hintSpan.innerHTML = "🚀 Almost net‑zero circular milestone!";
-    else if (finalPercent >= 50) hintSpan.innerHTML = "🌿 Strong circular momentum — keep processing returns";
-    else hintSpan.innerHTML = "🔄 Based on return approvals & final actions";
-  }
-
-  // Render users as modern cards
-  async function renderUsersCards(users) {
-    const grid = document.getElementById("usersGrid");
-    if (!users.length) {
-      grid.innerHTML = '<div class="user-card"><div class="card-body" style="text-align:center;">✨ No members yet ✨</div></div>';
-      return;
-    }
-    
-    let html = "";
-    for (const user of users) {
-      const userId = user.id;
-      const data = user.data;
-      const reviewCount = user.reviewCount || 0;
-      const status = data.status || "assigned";
-      const points = data.points ?? 0;
-      
-      html += `
-        <div class="user-card">
-          <div class="card-header">
-            <div>
-              <div class="user-name">${escapeHtml(data.name || "Unnamed")}</div>
-              <div class="user-email">${escapeHtml(data.email || "")}</div>
-            </div>
-            <div class="review-count"><i class="fas fa-pen-fancy"></i> ${reviewCount}/8 reviews</div>
-          </div>
-          <div class="card-body">
-            <div class="info-row"><span class="info-label"><i class="fas fa-shoe-prints"></i> Shoe ID</span><span class="info-value">${escapeHtml(data.shoeId || "—")}</span></div>
-            <div class="info-row"><span class="info-label"><i class="fas fa-tag"></i> Status</span><span class="info-value">${getUserStatusBadge(status)}</span></div>
-            <div class="info-row"><span class="info-label"><i class="fas fa-coins"></i> Points</span><span class="info-value" id="pointsDisplay-${userId}">${points}</span></div>
-            <div class="points-section">
-              <input type="number" id="points-${userId}" class="points-input" placeholder="Add points" value="">
-              <button class="btn-small" onclick="window.addPoints('${userId}')"><i class="fas fa-plus-circle"></i> Add</button>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-    grid.innerHTML = html;
-  }
-
-  // Render returns table (admin panel)
-  function renderReturnsTable(returns, usersMap) {
-    const tbody = document.getElementById("returnsTableBody");
-    if (!returns.length) {
-      tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-inbox"></i> No return requests</td></tr>';
-      return;
-    }
-    
-    let rows = "";
-    returns.forEach(ret => {
-      const userObj = usersMap.get(ret.userId);
-      const userName = userObj ? (userObj.name || "Unknown") : "Unknown user";
-      const retId = ret.id;
-      const status = ret.status || "pending";
-      
-      rows += `
-        <tr>
-          <td><strong>${escapeHtml(userName)}</strong><div style="font-size:0.65rem; color:#6c86a3;">ID: ${escapeHtml(ret.userId?.slice(0,8))}</div></td>
-          <td>${escapeHtml(ret.reason || "—")}</td>
-          <td>${escapeHtml(ret.condition || "—")}</td>
-          <td>${getReturnStatusBadge(status)}</td>
-          <td>
-            ${status === "pending" ? `<button class="btn-outline" onclick="window.approveReturn('${retId}', '${ret.userId}')"><i class="fas fa-check"></i> Approve</button>` : ""}
-            ${status === "approved" ? `
-              <select id="finalSelect-${retId}" class="action-select" onchange="window.updateFinal('${retId}', this.value, '${ret.userId}')">
-                <option value="">Select action</option>
-                <option value="repair">🔧 Repair</option>
-                <option value="reuse">🔄 Reuse</option>
-                <option value="recycle">♻️ Recycle</option>
-              </select>
-            ` : ""}
-            ${status === "completed" ? `<span style="font-size:0.7rem; color:#2c6e5c;"><i class="fas fa-check-circle"></i> Final: ${escapeHtml(ret.finalAction || "N/A")}</span>` : ""}
-          </td>
-        </tr>
-      `;
-    });
-    tbody.innerHTML = rows;
-  }
-
-  // LOAD ALL DATA (users + reviews count + returns)
-  async function loadDashboardData() {
-    try {
-      // Load users
-      const usersSnapshot = await getDocs(collection(db, "users"));
-      const users = [];
-      for (const docSnap of usersSnapshot.docs) {
-        const data = docSnap.data();
-        const userId = docSnap.id;
-        // Count reviews for this user
-        const reviewsQuery = query(collection(db, "reviews"), where("userId", "==", userId));
-        const reviewsSnap = await getDocs(reviewsQuery);
-        users.push({
-          id: userId,
-          data: data,
-          reviewCount: reviewsSnap.size
-        });
-      }
-      usersData = users;
-      
-      // Load returns
-      const returnsSnapshot = await getDocs(collection(db, "returns"));
-      const returns = [];
-      returnsSnapshot.forEach(docSnap => {
-        returns.push({ id: docSnap.id, ...docSnap.data() });
-      });
-      returnsData = returns;
-      
-      // Build user map for table
-      const userMap = new Map();
-      users.forEach(u => { userMap.set(u.id, u.data); });
-      
-      // Render UI
-      await renderUsersCards(users);
-      renderReturnsTable(returns, userMap);
-      updateStatsAndProgress(users.map(u => ({ status: u.data.status, reviewCount: u.reviewCount })), returns);
-      
-    } catch (e) {
-      console.error("Load error:", e);
-      document.getElementById("usersGrid").innerHTML = `<div class="user-card"><div class="card-body">Error: ${e.message}</div></div>`;
-      document.getElementById("returnsTableBody").innerHTML = `<tr><td colspan="5">Error loading returns</td></tr>`;
-    }
-  }
-
-  // Approve return (Firebase original logic)
-  window.approveReturn = async function(returnId, userId) {
-    if (!userId) { alert("User ID missing!"); return; }
-    try {
-      await updateDoc(doc(db, "returns", returnId), { status: "approved" });
-      await updateDoc(doc(db, "users", userId), { status: "returned" });
-      alert("✓ Return approved! User status updated to 'returned'.");
-      await loadDashboardData();
-    } catch (e) { alert("Error: " + e.message); }
-  };
-
-  // Final action (repair/reuse/recycle)
-  window.updateFinal = async function(returnId, action, userId) {
-    if (!action) { alert("Please select a final action"); return; }
-    try {
-      await updateDoc(doc(db, "returns", returnId), { status: "completed", finalAction: action });
-      await updateDoc(doc(db, "users", userId), { status: action });
-      alert(`✓ Final action set: ${action}. User status updated.`);
-      await loadDashboardData();
-    } catch (e) { alert("Error: " + e.message); }
-  };
-
-  // Add points feature (required)
-  window.addPoints = async function(userId) {
-    const inputEl = document.getElementById(`points-${userId}`);
-    if (!inputEl) return;
-    const pointsValue = inputEl.value.trim();
-    if (!pointsValue) { alert("Enter points value"); return; }
-    try {
-      await updateDoc(doc(db, "users", userId), { points: Number(pointsValue) });
-      alert("Points updated successfully!");
-      await loadDashboardData();
-    } catch (e) { alert("Error: " + e.message); }
-  };
-
-  // Expose functions globally
-  window.approveReturn = window.approveReturn;
-  window.updateFinal = window.updateFinal;
-  window.addPoints = window.addPoints;
-  
-  // Initial load
-  loadDashboardData();
-</script><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { 
-  getFirestore, collection, getDocs, addDoc, doc, updateDoc,
-  query, where
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc } 
+from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-// Firebase config
+/* ✅ YOUR FIREBASE CONFIG */
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
+  apiKey: "AIzaSyAXnKjLJm6Wb0b9MTdz-Rh2vxddl6EVsqc",
+  authDomain: "ekokintsugi-pilot.firebaseapp.com",
   projectId: "ekokintsugi-pilot",
-  storageBucket: "ekokintsugi-pilot.appspot.com",
+  storageBucket: "ekokintsugi-pilot.firebasestorage.app",
   messagingSenderId: "79027793730",
-  appId: "YOUR_APP_ID"
+  appId: "1:79027793730:web:6e858a22951a2da85f22db"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔥 USER REDIRECT
-const params = new URLSearchParams(window.location.search);
-const emailFromLogin = params.get("email");
+/* =========================
+   🔥 EXCEL UPLOAD FUNCTION
+========================= */
+window.uploadExcel = async function () {
 
-async function redirectUserIfNeeded() {
-  if (!emailFromLogin) return;
+  const file = document.getElementById("excelFile").files[0];
 
-  const snapshot = await getDocs(collection(db, "users"));
-
-  let found = false;
-
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    if (data.email === emailFromLogin) {
-      found = true;
-      window.location.href = "dashboard.html?id=" + docSnap.id;
-    }
-  });
-
-  if (!found) alert("User not found");
-}
-
-await redirectUserIfNeeded();
-
-// 🔥 ADD USER
-window.addUser = async function() {
-  try {
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("emailInput").value;
-
-    if (!name || !email) {
-      alert("Fill required fields");
-      return;
-    }
-
-    const snapshot = await getDocs(collection(db, "users"));
-
-    if (snapshot.size >= 10) {
-      alert("Max 10 users allowed");
-      return;
-    }
-
-    const docRef = await addDoc(collection(db, "users"), {
-      name,
-      email,
-      role: document.getElementById("roleInput").value,
-      points: Number(document.getElementById("pointsInput").value || 0),
-      shoeId: document.getElementById("shoeIdInput").value,
-      status: "assigned"
-    });
-
-    const qrUrl = window.location.origin + "/dashboard.html?id=" + docRef.id;
-
-    alert("✅ User added!\nQR URL:\n" + qrUrl);
-
-    loadDashboardData();
-
-  } catch (e) {
-    alert("Error: " + e.message);
-  }
-};
-
-// 🔥 LOAD USERS + RETURNS
-async function loadDashboardData() {
-  const usersSnapshot = await getDocs(collection(db, "users"));
-  const users = [];
-
-  usersSnapshot.forEach(docSnap => {
-    users.push({ id: docSnap.id, data: docSnap.data() });
-  });
-
-  renderUsers(users);
-}
-
-// 🔥 RENDER USERS
-function renderUsers(users) {
-  const grid = document.getElementById("usersGrid");
-
-  if (!users.length) {
-    grid.innerHTML = "<p>No users</p>";
+  if (!file) {
+    alert("Select Excel file");
     return;
   }
 
+  const reader = new FileReader();
+
+  reader.onload = async function (e) {
+
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: "array" });
+
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const json = XLSX.utils.sheet_to_json(sheet);
+
+    for (let row of json) {
+
+      await addDoc(collection(db, "users"), {
+        name: row.Name || "",
+        email: row.Email || "",
+        role: row.Role || "user",
+        points: Number(row.Points || 0),
+        shoeId: row.ShoeId || "",
+        status: "assigned"
+      });
+
+    }
+
+    alert("✅ Excel Uploaded!");
+    loadUsers();
+  };
+
+  reader.readAsArrayBuffer(file);
+};
+
+
+/* =========================
+   🔥 LOAD USERS
+========================= */
+async function loadUsers() {
+
+  const snapshot = await getDocs(collection(db, "users"));
+
   let html = "";
 
-  users.forEach(user => {
-    const data = user.data;
+  snapshot.forEach(doc => {
+    const d = doc.data();
 
     html += `
-      <div class="user-card">
-        <div class="card-body">
-          <b>${data.name}</b><br>
-          ${data.email}<br>
-          Shoe: ${data.shoeId}<br>
-
-          <a href="dashboard.html?id=${user.id}">Open Dashboard</a>
-        </div>
+      <div class="card">
+        <b>${d.name}</b><br>
+        ${d.email}<br>
+        Shoe: ${d.shoeId}
       </div>
     `;
   });
 
-  grid.innerHTML = html;
+  document.getElementById("usersGrid").innerHTML = html;
 }
 
-// INIT
-loadDashboardData();
+loadUsers();
 
 </script>
-<!-- 🔥 ONLY CHANGE: Added Home Button in header -->
-
-<body>
-
-<div class="dashboard-container">
-
-  <!-- Header -->
-
-  <div class="saas-header">
-    <div class="logo-area">
-      <h1><i class="fas fa-leaf"></i> EkoKintsugi · Admin</h1>
-      <p>Circular economy operations · returns & lifecycle</p>
-    </div>
-
-```
-<!-- ✅ NEW BUTTON -->
-<div style="display:flex; gap:10px; align-items:center;">
-  <button onclick="goHome()" class="btn-small" style="background:#0f3a2e;">
-    🏠 Home
-  </button>
-
-  <div class="badge-pilot">
-    <i class="fas fa-calendar-week"></i> Pilot · 8-week circular sprint
-  </div>
-</div>
-```
-
-  </div>
-
-  <!-- KEEP EVERYTHING SAME BELOW -->
-
-  <!-- KPI Cards -->
-
-  <div class="stats-grid" id="statsGrid">
-    <div class="stat-card"><div class="stat-number" id="statTotal">0</div><div class="stat-label"><i class="fas fa-users"></i> Total members</div></div>
-    <div class="stat-card"><div class="stat-number" id="statReturnRequested">0</div><div class="stat-label"><i class="fas fa-exchange-alt"></i> Return requests</div></div>
-    <div class="stat-card"><div class="stat-number" id="statCompleted">0</div><div class="stat-label"><i class="fas fa-check-circle"></i> Completed</div></div>
-    <div class="stat-card"><div class="stat-number" id="statAvgReviews">0</div><div class="stat-label"><i class="fas fa-star"></i> Avg reviews</div></div>
-  </div>
-
-  <!-- Users section -->
-
-  <div class="section-title">
-    <i class="fas fa-id-card"></i> Registered members
-    <span id="userCountBadge">0</span>
-  </div>
-
-  <div id="usersGrid" class="users-grid">
-    <div class="user-card">
-      <div class="card-body" style="text-align:center; padding:40px;">
-        Loading participants...
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<script>
-function goHome() {
-  window.location.href = "home.html";
-}
-</script>
-
-</body>
 
 </body>
 </html>
