@@ -1,0 +1,1 @@
+A full-stack pilot system for tracking product lifecycle in a circular economy model. Features include QR-based dashboard access, structured weekly feedback system, return and recycling workflow, and admin lifecycle control. Built using HTML, CSS, JavaScript, and Firebase Firestore.
